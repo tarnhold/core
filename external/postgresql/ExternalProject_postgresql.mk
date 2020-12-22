@@ -63,7 +63,7 @@ endif
 $(call gb_ExternalProject_get_state_target,postgresql,build) :
 	$(call gb_Trace_StartRange,postgresql,EXTERNAL)
 	$(call gb_ExternalProject_run,build,\
-		./configure \
+		$(gb_RUN_CONFIGURE) ./configure \
 			--without-readline \
 			--without-zlib \
 			--with-ldap \
