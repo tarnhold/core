@@ -24,6 +24,8 @@ $(eval $(call gb_Library_set_include,gie,\
     -I$(SRCDIR)/filter/inc \
 ))
 
+$(eval $(call gb_Library_set_plugin_for,gie,vcl))
+
 $(eval $(call gb_Library_use_external,gie,boost_headers))
 
 $(eval $(call gb_Library_use_sdk_api,gie))
@@ -39,7 +41,6 @@ $(eval $(call gb_Library_use_libraries,gie,\
     comphelper \
     i18nlangtag \
     svt \
-    vcl \
     utl \
     tl \
     tk \
