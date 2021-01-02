@@ -30,8 +30,10 @@ using namespace com::sun::star;
 
 namespace drawinglayer::primitive2d
 {
-        void HelplinePrimitive2D::create2DDecomposition(Primitive2DContainer& rContainer, const geometry::ViewInformation2D& rViewInformation) const
+        void HelplinePrimitive2D::create2DDecomposition(Primitive2DContainer& rContainer, VisitingParameters const & rParameters) const
         {
+            auto const & rViewInformation = rParameters.getViewInformation();
+
             if(rViewInformation.getViewport().isEmpty() || getDirection().equalZero())
                 return;
 
@@ -159,9 +161,10 @@ namespace drawinglayer::primitive2d
             return false;
         }
 
-        void HelplinePrimitive2D::get2DDecomposition(Primitive2DDecompositionVisitor& rVisitor, const geometry::ViewInformation2D& rViewInformation) const
+        void HelplinePrimitive2D::get2DDecomposition(Primitive2DDecompositionVisitor& rVisitor, VisitingParameters const & rParameters) const
         {
             ::osl::MutexGuard aGuard( m_aMutex );
+            auto const & rViewInformation = rParameters.getViewInformation();
 
             if(!getBuffered2DDecomposition().empty())
             {
@@ -180,7 +183,7 @@ namespace drawinglayer::primitive2d
             }
 
             // use parent implementation
-            BufferedDecompositionPrimitive2D::get2DDecomposition(rVisitor, rViewInformation);
+            BufferedDecompositionPrimitive2D::get2DDecomposition(rVisitor, rParameters);
         }
 
         // provide unique ID

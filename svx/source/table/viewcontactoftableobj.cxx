@@ -59,7 +59,7 @@ namespace drawinglayer::primitive2d
 
         protected:
             // local decomposition.
-            virtual void create2DDecomposition(Primitive2DContainer& rContainer, const geometry::ViewInformation2D& aViewInformation) const override;
+            virtual void create2DDecomposition(Primitive2DContainer& rContainer, VisitingParameters const& rParameters) const override;
 
         public:
             SdrCellPrimitive2D(
@@ -84,7 +84,7 @@ namespace drawinglayer::primitive2d
 
         }
 
-        void SdrCellPrimitive2D::create2DDecomposition(Primitive2DContainer& rContainer, const geometry::ViewInformation2D& /*aViewInformation*/) const
+        void SdrCellPrimitive2D::create2DDecomposition(Primitive2DContainer& rContainer, VisitingParameters const& /*rParameters*/) const
         {
             // prepare unit polygon
             const basegfx::B2DPolyPolygon aUnitPolyPolygon(basegfx::utils::createUnitPolygon());
