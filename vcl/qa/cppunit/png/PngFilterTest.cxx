@@ -24,8 +24,11 @@
 #include <test/bootstrapfixture.hxx>
 #include <tools/stream.hxx>
 #include <vcl/filter/PngImageReader.hxx>
+#include <vcl/filter/PngImageWriter.hxx>
 #include <vcl/BitmapReadAccess.hxx>
+#include <bitmap/BitmapWriteAccess.hxx>
 #include <vcl/alpha.hxx>
+#include <unotools/tempfile.hxx>
 
 using namespace css;
 
@@ -46,11 +49,56 @@ public:
     }
 
     void testPng();
+    void testPngWriting();
 
     CPPUNIT_TEST_SUITE(PngFilterTest);
     CPPUNIT_TEST(testPng);
+    CPPUNIT_TEST(testPngWriting);
     CPPUNIT_TEST_SUITE_END();
 };
+
+void PngFilterTest::testPngWriting()
+{
+    utl::TempFile aTempFile;
+    aTempFile.EnableKillingFile();
+    {
+        SvStream& rStream = *aTempFile.GetStream(StreamMode::WRITE);
+        Bitmap aBitmap(Size(16, 16), 24);
+        {
+            BitmapScopedWriteAccess pWriteAccess(aBitmap);
+            pWriteAccess->Erase(COL_BLACK);
+            for (int i = 0; i < 8; ++i)
+            {
+                for (int j = 0; j < 8; ++j)
+                {
+                    pWriteAccess->SetPixel(i, j, COL_LIGHTRED);
+                }
+            }
+            for (int i = 8; i < 16; ++i)
+            {
+                for (int j = 8; j < 16; ++j)
+                {
+                    pWriteAccess->SetPixel(i, j, COL_LIGHTBLUE);
+                }
+            }
+        }
+        BitmapEx aBitmapEx(aBitmap);
+
+        vcl::PngImageWriter aPngWriter(rStream);
+        CPPUNIT_ASSERT_EQUAL(true, aPngWriter.write(aBitmapEx));
+    }
+    {
+        SvStream& rStream = *aTempFile.GetStream(StreamMode::READ);
+        rStream.Seek(0);
+
+        vcl::PngImageReader aPngReader(rStream);
+        BitmapEx aBitmapEx;
+        CPPUNIT_ASSERT_EQUAL(true, aPngReader.read(aBitmapEx));
+
+        CPPUNIT_ASSERT_EQUAL(16L, aBitmapEx.GetSizePixel().Width());
+        CPPUNIT_ASSERT_EQUAL(16L, aBitmapEx.GetSizePixel().Height());
+    }
+}
 
 void PngFilterTest::testPng()
 {
